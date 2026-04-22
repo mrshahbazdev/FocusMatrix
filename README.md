@@ -105,6 +105,42 @@ Utility classes are exposed as `fm-card`, `fm-btn-primary`, `fm-badge-keep`, etc
 
 ---
 
+## ✦ Shared Hosting Deployment (cPanel / allocore.de)
+
+Pre‑built Vite assets are committed under `public/build/` so shared hosts that don't allow `npm` can still run the app.
+
+1. Upload the whole repo to your hosting.
+2. Point the domain's document root to the `public/` folder (or add a `.htaccess` redirect).
+3. SSH (if available) → `composer install --no-dev --optimize-autoloader`.
+   Or: upload `vendor/` from your local machine.
+4. Create `.env` on the server with production values:
+   ```
+   APP_NAME=FocusMatrix
+   APP_ENV=production
+   APP_DEBUG=false
+   APP_URL=https://focusmatrix.allocore.de
+   APP_KEY=base64:... # php artisan key:generate --show
+
+   DB_CONNECTION=mysql
+   DB_HOST=localhost
+   DB_DATABASE=...
+   DB_USERNAME=...
+   DB_PASSWORD=...
+
+   GOOGLE_CLIENT_ID=...
+   GOOGLE_CLIENT_SECRET=...
+   GOOGLE_REDIRECT_URI=https://focusmatrix.allocore.de/integrations/google/callback
+   ```
+5. `php artisan migrate --force`
+6. `php artisan storage:link`
+7. `php artisan config:cache && php artisan route:cache && php artisan view:cache`
+
+### Google OAuth production setup
+In Google Cloud Console → OAuth consent screen → **Test users** → add every email address that needs to log in (while still in "Testing" mode). Add the production redirect URI to the OAuth client:
+`https://focusmatrix.allocore.de/integrations/google/callback`
+
+---
+
 ## ✦ Roadmap (post‑MVP)
 
 - OpenAI / Anthropic Co‑Pilot (triage suggestions, delegation draft messages, weekly insights)
