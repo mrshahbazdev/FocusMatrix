@@ -4,6 +4,7 @@ import { Link, usePage, router } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 import BrandMark from '@/Components/BrandMark.vue';
 import LanguageSwitcher from '@/Components/LanguageSwitcher.vue';
+import CookieBanner from '@/Components/CookieBanner.vue';
 import {
     HomeIcon,
     InboxIcon,
@@ -124,5 +125,7 @@ function logout() {
                 <slot />
             </main>
         </div>
+
+        <CookieBanner />
     </div>
 </template>

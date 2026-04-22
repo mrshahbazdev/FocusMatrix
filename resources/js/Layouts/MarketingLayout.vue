@@ -3,6 +3,7 @@ import { Link } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 import BrandMark from '@/Components/BrandMark.vue';
 import LanguageSwitcher from '@/Components/LanguageSwitcher.vue';
+import CookieBanner from '@/Components/CookieBanner.vue';
 
 const { t } = useI18n();
 </script>
@@ -55,12 +56,12 @@ const { t } = useI18n();
                     </ul>
                 </div>
                 <div class="text-sm">
-                    <div class="fm-section-title text-navy-300 mb-2">Legal</div>
+                    <div class="fm-section-title text-navy-300 mb-2">{{ t('legal.legal') }}</div>
                     <ul class="space-y-1">
-                        <li>Impressum</li>
-                        <li>DSGVO / GDPR</li>
-                        <li>Datenschutz</li>
-                        <li>AGB</li>
+                        <li><Link href="/legal/impressum" class="hover:text-white">{{ t('legal.impressum') }}</Link></li>
+                        <li><Link href="/legal/privacy" class="hover:text-white">{{ t('legal.privacy') }}</Link></li>
+                        <li><Link href="/legal/terms" class="hover:text-white">{{ t('legal.terms') }}</Link></li>
+                        <li><Link href="/legal/cookies" class="hover:text-white">{{ t('legal.cookies') }}</Link></li>
                     </ul>
                 </div>
             </div>
@@ -71,5 +72,7 @@ const { t } = useI18n();
                 </div>
             </div>
         </footer>
+
+        <CookieBanner />
     </div>
 </template>

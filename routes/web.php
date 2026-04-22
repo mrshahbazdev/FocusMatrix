@@ -7,6 +7,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DelegationController;
 use App\Http\Controllers\IntegrationController;
 use App\Http\Controllers\KillListController;
+use App\Http\Controllers\LegalController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\OrgCheckController;
 use App\Http\Controllers\SelfCheckController;
@@ -15,6 +16,11 @@ use App\Http\Controllers\TriageController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', LandingController::class)->name('landing');
+
+Route::get('/legal/impressum', [LegalController::class, 'impressum'])->name('legal.impressum');
+Route::get('/legal/privacy', [LegalController::class, 'privacy'])->name('legal.privacy');
+Route::get('/legal/terms', [LegalController::class, 'terms'])->name('legal.terms');
+Route::get('/legal/cookies', [LegalController::class, 'cookies'])->name('legal.cookies');
 
 Route::middleware([
     'auth:sanctum',
@@ -62,4 +68,7 @@ Route::middleware([
     Route::get('/billing/portal', [BillingController::class, 'portal'])->name('billing.portal');
     Route::post('/billing/cancel', [BillingController::class, 'cancel'])->name('billing.cancel');
     Route::post('/billing/resume', [BillingController::class, 'resume'])->name('billing.resume');
+
+    Route::get('/gdpr/export', [LegalController::class, 'exportData'])->name('gdpr.export');
+    Route::post('/gdpr/delete', [LegalController::class, 'requestDeletion'])->name('gdpr.delete');
 });
