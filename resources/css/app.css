@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    html {
+        font-feature-settings: "cv11", "ss01";
+        -webkit-font-smoothing: antialiased;
+    }
+    body {
+        @apply bg-graphite-50 text-navy-900 font-sans;
+    }
+    h1, h2, h3, h4 {
+        @apply font-display tracking-tight text-navy-900;
+    }
+}
+
+@layer components {
+    .fm-card {
+        @apply bg-white rounded-2xl shadow-soft border border-graphite-200/70 p-6;
+    }
+    .fm-card-hover {
+        @apply fm-card hover:shadow-lifted transition-shadow duration-200;
+    }
+    .fm-btn {
+        @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition;
+    }
+    .fm-btn-primary {
+        @apply fm-btn bg-navy-800 text-white hover:bg-navy-700 focus:ring-2 focus:ring-navy-400 focus:ring-offset-2;
+    }
+    .fm-btn-secondary {
+        @apply fm-btn bg-white text-navy-800 border border-graphite-300 hover:bg-graphite-50;
+    }
+    .fm-btn-ghost {
+        @apply fm-btn text-navy-700 hover:bg-graphite-100;
+    }
+    .fm-badge {
+        @apply inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium;
+    }
+    .fm-badge-keep {
+        @apply fm-badge bg-emerald-100 text-emerald-800;
+    }
+    .fm-badge-delegate {
+        @apply fm-badge bg-amber-100 text-amber-800;
+    }
+    .fm-badge-drop {
+        @apply fm-badge bg-rose-100 text-rose-800;
+    }
+    .fm-input {
+        @apply block w-full rounded-lg border-graphite-300 focus:border-navy-600 focus:ring-navy-600 text-sm;
+    }
+    .fm-label {
+        @apply block text-sm font-medium text-navy-800 mb-1;
+    }
+    .fm-section-title {
+        @apply text-xs font-semibold uppercase tracking-wider text-graphite-500;
+    }
+}
+
+[x-cloak] { display: none; }
