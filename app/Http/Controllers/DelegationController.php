@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Delegation;
 use App\Models\Task;
 use App\Services\Ai\AiManager;
+use App\Services\WebhookNotifier;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -13,7 +14,10 @@ use Inertia\Response;
 
 class DelegationController extends Controller
 {
-    public function __construct(private readonly AiManager $ai) {}
+    public function __construct(
+        private readonly AiManager $ai,
+        private readonly WebhookNotifier $notifier,
+    ) {}
 
     public function aiDraft(Request $request): JsonResponse
     {
@@ -98,7 +102,7 @@ class DelegationController extends Controller
         $task = Task::where('user_id', $request->user()->id)->findOrFail($data['task_id']);
         $task->update(['status' => Task::STATUS_DELEGATE]);
 
-        Delegation::updateOrCreate(
+        $delegation = Delegation::updateOrCreate(
             ['task_id' => $task->id],
             [
                 ...$data,
@@ -106,6 +110,21 @@ class DelegationController extends Controller
                 'status' => 'open',
                 'health_score' => 100,
             ]
+        );
+
+        $delegateLabel = $data['delegate_name_fallback']
+            ?? optional($delegation->fresh()->delegateUser)->name
+            ?? '—';
+        $this->notifier->notify(
+            $request->user(),
+            'New delegation: ' . $task->title,
+            $data['goal'],
+            [
+                'Delegate' => $delegateLabel,
+                'Decision scope' => ucfirst($data['decision_scope']),
+                'Deadline' => $data['deadline'] ?? '—',
+            ],
+            url('/delegations'),
         );
 
         return redirect()->route('delegations.index')

@@ -11,9 +11,12 @@ class Integration extends Model
     use HasFactory;
 
     public const PROVIDER_GOOGLE = 'google';
+    public const PROVIDER_SLACK = 'slack';
+    public const PROVIDER_TEAMS = 'teams';
+    public const PROVIDER_OUTLOOK = 'outlook';
 
     protected $fillable = [
-        'user_id', 'provider', 'account_email',
+        'user_id', 'provider', 'account_email', 'label',
         'access_token', 'refresh_token', 'expires_at',
         'scopes', 'meta', 'last_synced_at',
     ];

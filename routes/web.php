@@ -5,6 +5,7 @@ use App\Http\Controllers\BillingController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DelegationController;
+use App\Http\Controllers\IcsController;
 use App\Http\Controllers\IntegrationController;
 use App\Http\Controllers\KillListController;
 use App\Http\Controllers\LegalController;
@@ -21,6 +22,8 @@ Route::get('/legal/impressum', [LegalController::class, 'impressum'])->name('leg
 Route::get('/legal/privacy', [LegalController::class, 'privacy'])->name('legal.privacy');
 Route::get('/legal/terms', [LegalController::class, 'terms'])->name('legal.terms');
 Route::get('/legal/cookies', [LegalController::class, 'cookies'])->name('legal.cookies');
+
+Route::get('/calendar/ics/{token}', [IcsController::class, 'feed'])->name('calendar.ics');
 
 Route::middleware([
     'auth:sanctum',
@@ -49,6 +52,11 @@ Route::middleware([
     Route::get('/integrations/google/connect', [IntegrationController::class, 'connectGoogle'])->name('integrations.google.connect');
     Route::get('/integrations/google/callback', [IntegrationController::class, 'callbackGoogle'])->name('integrations.google.callback');
     Route::delete('/integrations/google', [IntegrationController::class, 'disconnectGoogle'])->name('integrations.google.disconnect');
+
+    Route::post('/integrations/webhook/{provider}', [IntegrationController::class, 'connectWebhook'])->name('integrations.webhook.connect');
+    Route::post('/integrations/webhook/{provider}/test', [IntegrationController::class, 'testWebhook'])->name('integrations.webhook.test');
+    Route::delete('/integrations/webhook/{provider}', [IntegrationController::class, 'disconnectWebhook'])->name('integrations.webhook.disconnect');
+    Route::post('/integrations/ics/regenerate', [IntegrationController::class, 'regenerateIcsToken'])->name('integrations.ics.regenerate');
 
     Route::get('/calendar', [CalendarController::class, 'index'])->name('calendar.index');
     Route::post('/calendar/focus-block/{task}', [CalendarController::class, 'focusBlock'])->name('calendar.focus-block');
