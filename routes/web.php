@@ -15,6 +15,7 @@ use App\Http\Controllers\OrgCheckController;
 use App\Http\Controllers\SelfCheckController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TriageController;
+use App\Http\Controllers\VoiceController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', LandingController::class)->name('landing');
@@ -79,6 +80,8 @@ Route::middleware([
     Route::post('/billing/resume', [BillingController::class, 'resume'])->name('billing.resume');
 
     Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics.index');
+
+    Route::post('/voice/transcribe', [VoiceController::class, 'transcribe'])->name('voice.transcribe');
 
     Route::get('/gdpr/export', [LegalController::class, 'exportData'])->name('gdpr.export');
     Route::post('/gdpr/delete', [LegalController::class, 'requestDeletion'])->name('gdpr.delete');

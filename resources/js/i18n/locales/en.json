@@ -448,5 +448,19 @@
         "locked_noteam_desc": "Team analytics aggregates data across every team member. Create or join a team, then come back here.",
         "upgrade_cta": "View plans",
         "back_to_dashboard": "Back to dashboard"
+    },
+    "voice": {
+        "title": "Voice capture",
+        "subtitle": "Record a quick thought; Whisper transcribes it via your OpenAI key.",
+        "start": "Start recording",
+        "stop": "Stop recording",
+        "max_60": "max 60s",
+        "auto_create_task": "Also create a task from the transcription",
+        "transcribing": "Transcribing…",
+        "done": "Transcribed",
+        "record_another": "Record another",
+        "try_again": "Try again",
+        "unsupported": "Your browser does not support voice capture. Use Chrome, Edge or Safari.",
+        "permission_denied": "Microphone permission denied. Check your browser settings."
     }
 }

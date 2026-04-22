@@ -448,5 +448,19 @@
         "locked_noteam_desc": "Team-Analyse aggregiert Daten über alle Team-Mitglieder. Erstellen Sie ein Team oder treten einem bei.",
         "upgrade_cta": "Tarife ansehen",
         "back_to_dashboard": "Zurück zum Dashboard"
+    },
+    "voice": {
+        "title": "Sprach‑Erfassung",
+        "subtitle": "Kurzen Gedanken aufnehmen; Whisper transkribiert via Ihrem OpenAI‑Schlüssel.",
+        "start": "Aufnahme starten",
+        "stop": "Aufnahme beenden",
+        "max_60": "max. 60s",
+        "auto_create_task": "Aus Transkription direkt Aufgabe erstellen",
+        "transcribing": "Transkribiere…",
+        "done": "Transkribiert",
+        "record_another": "Erneut aufnehmen",
+        "try_again": "Erneut versuchen",
+        "unsupported": "Ihr Browser unterstützt keine Sprach‑Erfassung. Nutzen Sie Chrome, Edge oder Safari.",
+        "permission_denied": "Mikrofon‑Zugriff verweigert. Browser‑Einstellungen prüfen."
     }
 }

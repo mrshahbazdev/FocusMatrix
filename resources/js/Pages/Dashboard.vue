@@ -1,9 +1,10 @@
 <script setup>
-import { Link, useForm, usePage } from '@inertiajs/vue3';
+import { Link, router, useForm, usePage } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 import FocusLayout from '@/Layouts/FocusLayout.vue';
 import StatCard from '@/Components/StatCard.vue';
 import GuidingPrinciple from '@/Components/GuidingPrinciple.vue';
+import VoiceCapture from '@/Components/VoiceCapture.vue';
 import {
     ArrowRightIcon,
     PlusIcon,
@@ -34,6 +35,14 @@ function submitCapture() {
         preserveScroll: true,
         onSuccess: () => form.reset(),
     });
+}
+
+function onVoiceTranscribed(payload) {
+    if (payload?.task) {
+        router.reload({ only: ['recent_tasks', 'stats'] });
+    } else if (payload?.text) {
+        form.title = payload.text.slice(0, 140);
+    }
 }
 
 const statusStyle = (status) => {
@@ -86,6 +95,10 @@ const statusStyle = (status) => {
                     </button>
                 </form>
                 <div v-if="form.errors.title" class="text-xs text-rose-600 mt-2">{{ form.errors.title }}</div>
+
+                <div class="mt-4">
+                    <VoiceCapture @transcribed="onVoiceTranscribed" />
+                </div>
 
                 <!-- Recent tasks -->
                 <div class="mt-8">
