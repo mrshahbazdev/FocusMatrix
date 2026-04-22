@@ -1,9 +1,11 @@
 <script setup>
+import { ref } from 'vue';
 import { Link, useForm, router } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 import FocusLayout from '@/Layouts/FocusLayout.vue';
+import FocusBlockModal from '@/Components/FocusBlockModal.vue';
 import {
-    InboxIcon, CheckBadgeIcon, UserGroupIcon, XCircleIcon, CheckIcon, PlusIcon, TrashIcon,
+    InboxIcon, CheckBadgeIcon, UserGroupIcon, XCircleIcon, CheckIcon, PlusIcon, TrashIcon, CalendarDaysIcon,
 } from '@heroicons/vue/24/outline';
 
 const props = defineProps({
@@ -40,6 +42,10 @@ function removeTask(task) {
     if (!confirm('Delete task?')) return;
     router.delete(route('tasks.destroy', task.id), { preserveScroll: true });
 }
+
+const focusTask = ref(null);
+function openFocusModal(task) { focusTask.value = task; }
+function closeFocusModal() { focusTask.value = null; }
 </script>
 
 <template>
@@ -95,6 +101,9 @@ function removeTask(task) {
                         <Link v-if="task.status === 'inbox'" :href="route('tasks.triage', task.id)" class="fm-btn-primary !py-1.5 text-xs">
                             Triage →
                         </Link>
+                        <button v-if="task.status === 'keep'" @click="openFocusModal(task)" class="fm-btn-secondary !py-1.5 text-xs">
+                            <CalendarDaysIcon class="w-4 h-4" /> {{ t('calendar.block_focus') }}
+                        </button>
                         <button v-if="task.status !== 'done'" @click="markDone(task)" class="fm-btn-secondary !py-1.5 text-xs">
                             <CheckIcon class="w-4 h-4" /> {{ t('task.mark_done') }}
                         </button>
@@ -105,5 +114,7 @@ function removeTask(task) {
                 </li>
             </ul>
         </div>
+
+        <FocusBlockModal :open="!!focusTask" :task="focusTask" @close="closeFocusModal" />
     </FocusLayout>
 </template>

@@ -57,6 +57,11 @@ class User extends Authenticatable
         return $this->hasMany(KillListItem::class);
     }
 
+    public function integrations()
+    {
+        return $this->hasMany(Integration::class);
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *

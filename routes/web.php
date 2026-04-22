@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DelegationController;
+use App\Http\Controllers\IntegrationController;
 use App\Http\Controllers\KillListController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\OrgCheckController;
@@ -34,4 +36,13 @@ Route::middleware([
 
     Route::get('/org-check', [OrgCheckController::class, 'index'])->name('org-check.index');
     Route::post('/org-check', [OrgCheckController::class, 'store'])->name('org-check.store');
+
+    Route::get('/integrations', [IntegrationController::class, 'index'])->name('integrations.index');
+    Route::get('/integrations/google/connect', [IntegrationController::class, 'connectGoogle'])->name('integrations.google.connect');
+    Route::get('/integrations/google/callback', [IntegrationController::class, 'callbackGoogle'])->name('integrations.google.callback');
+    Route::delete('/integrations/google', [IntegrationController::class, 'disconnectGoogle'])->name('integrations.google.disconnect');
+
+    Route::get('/calendar', [CalendarController::class, 'index'])->name('calendar.index');
+    Route::post('/calendar/focus-block/{task}', [CalendarController::class, 'focusBlock'])->name('calendar.focus-block');
+    Route::post('/calendar/import-weak', [CalendarController::class, 'importWeakToInbox'])->name('calendar.import-weak');
 });

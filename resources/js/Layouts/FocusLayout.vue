@@ -12,6 +12,7 @@ import {
     XCircleIcon,
     CalendarDaysIcon,
     BuildingOffice2Icon,
+    Squares2X2Icon,
     Cog6ToothIcon,
     ArrowLeftOnRectangleIcon,
 } from '@heroicons/vue/24/outline';
@@ -27,8 +28,10 @@ const nav = computed(() => [
     { label: t('nav.inbox'), href: route('tasks.index', { status: 'inbox' }), icon: InboxIcon, active: route().current('tasks.index') },
     { label: t('nav.delegate'), href: route('delegations.index'), icon: UserGroupIcon, active: route().current('delegations.*') },
     { label: t('drop.kill_list'), href: route('kill-list.index'), icon: XCircleIcon, active: route().current('kill-list.*') },
-    { label: t('nav.selfcheck'), href: route('self-check.index'), icon: CalendarDaysIcon, active: route().current('self-check.*') },
+    { label: t('nav.calendar'), href: route('calendar.index'), icon: CalendarDaysIcon, active: route().current('calendar.*') },
+    { label: t('nav.selfcheck'), href: route('self-check.index'), icon: CheckBadgeIcon, active: route().current('self-check.*') },
     { label: t('nav.orgcheck'), href: route('org-check.index'), icon: BuildingOffice2Icon, active: route().current('org-check.*') },
+    { label: t('nav.integrations'), href: route('integrations.index'), icon: Squares2X2Icon, active: route().current('integrations.*') },
 ]);
 
 function logout() {
