@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AiController;
+use App\Http\Controllers\BillingController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DelegationController;
@@ -55,4 +56,10 @@ Route::middleware([
     Route::post('/tasks/{task}/ai-suggest', [TriageController::class, 'aiSuggest'])->name('tasks.ai-suggest');
     Route::post('/delegations/draft', [DelegationController::class, 'aiDraft'])->name('delegations.ai-draft');
     Route::post('/self-check/insights', [SelfCheckController::class, 'aiInsights'])->name('self-check.ai-insights');
+
+    Route::get('/billing', [BillingController::class, 'index'])->name('billing.index');
+    Route::get('/billing/checkout/{plan}', [BillingController::class, 'checkout'])->name('billing.checkout');
+    Route::get('/billing/portal', [BillingController::class, 'portal'])->name('billing.portal');
+    Route::post('/billing/cancel', [BillingController::class, 'cancel'])->name('billing.cancel');
+    Route::post('/billing/resume', [BillingController::class, 'resume'])->name('billing.resume');
 });

@@ -14,6 +14,7 @@ import {
     BuildingOffice2Icon,
     Squares2X2Icon,
     SparklesIcon,
+    CreditCardIcon,
     Cog6ToothIcon,
     ArrowLeftOnRectangleIcon,
 } from '@heroicons/vue/24/outline';
@@ -34,6 +35,7 @@ const nav = computed(() => [
     { label: t('nav.orgcheck'), href: route('org-check.index'), icon: BuildingOffice2Icon, active: route().current('org-check.*') },
     { label: t('nav.integrations'), href: route('integrations.index'), icon: Squares2X2Icon, active: route().current('integrations.*') },
     { label: t('nav.ai'), href: route('ai.index'), icon: SparklesIcon, active: route().current('ai.*') },
+    { label: t('nav.billing'), href: route('billing.index'), icon: CreditCardIcon, active: route().current('billing.*') },
 ]);
 
 function logout() {

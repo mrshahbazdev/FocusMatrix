@@ -40,4 +40,11 @@ return [
         'model' => env('OPENAI_MODEL', 'gpt-4o-mini'),
     ],
 
+    'stripe' => [
+        'prices' => [
+            'pro' => env('STRIPE_PRICE_PRO'),
+            'team' => env('STRIPE_PRICE_TEAM'),
+        ],
+    ],
+
 ];
