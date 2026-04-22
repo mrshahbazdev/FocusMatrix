@@ -1,0 +1,70 @@
+# ============================================================================
+# FocusMatrix — root .htaccess for shared hosting (cPanel / Plesk)
+# ----------------------------------------------------------------------------
+# Use this file ONLY if you cannot point the domain's document root to
+# /home/USERNAME/focusmatrix/public. In that case, upload the whole Laravel
+# app into the domain's document root (e.g. ~/public_html or the subdomain
+# folder) and this file will transparently rewrite every request into the
+# real Laravel entry point at /public/index.php.
+#
+# Preferred alternative: in cPanel → Domains / Subdomains, set the
+# document root of focusmatrix.allocore.de to /home/USERNAME/focusmatrix/public
+# and delete this file — it is not needed then.
+# ============================================================================
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Block direct access to dotfiles (.env, .git, etc.)
+    RewriteRule (^|/)\.(?!well-known) - [F,L]
+
+    # Don't rewrite requests that are already in /public
+    RewriteCond %{REQUEST_URI} !^/public/
+
+    # Static asset passthrough (serve files that actually exist in /public)
+    RewriteCond %{DOCUMENT_ROOT}/public%{REQUEST_URI} -f [OR]
+    RewriteCond %{DOCUMENT_ROOT}/public%{REQUEST_URI} -d
+    RewriteRule ^(.*)$ public/$1 [L]
+
+    # Everything else → Laravel front controller
+    RewriteRule ^(.*)$ public/index.php?/$1 [L,QSA]
+</IfModule>
+
+<IfModule mod_headers.c>
+    # Basic security headers
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+</IfModule>
+
+# Force HTTPS (remove if your host handles SSL redirect separately)
+<IfModule mod_rewrite.c>
+    RewriteCond %{HTTPS} !=on
+    RewriteCond %{HTTP:X-Forwarded-Proto} !https
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+# Deny access to sensitive files
+<FilesMatch "^\.env|composer\.(json|lock)|package(-lock)?\.json|artisan|\.gitignore|\.gitattributes">
+    Require all denied
+</FilesMatch>
+
+# Gzip compression for text-based assets
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript
+    AddOutputFilterByType DEFLATE application/javascript application/json application/xml
+    AddOutputFilterByType DEFLATE image/svg+xml font/woff2
+</IfModule>
+
+# Long-term caching for hashed Vite assets
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css                 "access plus 1 year"
+    ExpiresByType application/javascript   "access plus 1 year"
+    ExpiresByType image/svg+xml            "access plus 1 month"
+    ExpiresByType image/png                "access plus 1 month"
+    ExpiresByType image/jpeg               "access plus 1 month"
+    ExpiresByType image/webp               "access plus 1 month"
+    ExpiresByType font/woff2               "access plus 1 year"
+</IfModule>
