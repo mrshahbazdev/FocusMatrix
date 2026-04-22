@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Delegation;
 use App\Models\Task;
+use App\Services\Ai\AiManager;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -11,6 +13,38 @@ use Inertia\Response;
 
 class DelegationController extends Controller
 {
+    public function __construct(private readonly AiManager $ai) {}
+
+    public function aiDraft(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'task_id' => ['required', 'exists:tasks,id'],
+            'delegate_name' => ['nullable', 'string'],
+        ]);
+        $task = Task::where('user_id', $request->user()->id)->findOrFail($data['task_id']);
+
+        $locale = $request->user()->locale ?? app()->getLocale();
+        $system = "You draft a delegation brief for a manager following the Only-You-Principle. "
+            . "Return JSON with keys: goal (1-2 sentences, concrete outcome), "
+            . "decision_scope (one of: inform, consult, decide), "
+            . "resources (short, what they need), "
+            . "deadline_hint (short phrase). Language: " . $locale . ".";
+
+        $delegateName = $data['delegate_name'] ?? 'the best person for this';
+        $user_msg = "TASK: {$task->title}\nDETAILS: " . ($task->description ?? '(none)') . "\nDELEGATE: {$delegateName}\n\n"
+            . "Write a crystal-clear delegation: what good result looks like, how much decision authority they have, and what resources/backing they need. No micromanagement.";
+
+        $json = $this->ai->promptJsonFor($request->user(), $system, $user_msg);
+        if (! $json) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'AI not configured. Add your Gemini/OpenAI/Anthropic key in Settings → AI.',
+            ], 200);
+        }
+        return response()->json(['ok' => true, 'draft' => $json]);
+    }
+
+
     public function index(Request $request): Response
     {
         $delegations = Delegation::where('delegator_id', $request->user()->id)

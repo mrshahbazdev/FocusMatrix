@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Task;
+use App\Services\Ai\AiManager;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -10,6 +12,8 @@ use Inertia\Response;
 
 class TriageController extends Controller
 {
+    public function __construct(private readonly AiManager $ai) {}
+
     public function show(Request $request, Task $task): Response
     {
         abort_unless($task->user_id === $request->user()->id, 403);
@@ -42,13 +46,55 @@ class TriageController extends Controller
                 ->with('success', __('Great. Let\'s delegate this right.'));
         }
 
-        // AI path — heuristic suggestion for now
-        $suggestion = $this->heuristicSuggestion($task);
+        // Maybe → AI Co-Pilot suggestion (LLM if configured, heuristic otherwise)
+        $suggestion = $this->aiOrHeuristic($request, $task);
         $task->update([
-            'ai_suggestion' => $suggestion,
-            'ai_confidence' => 0.7,
+            'ai_suggestion' => $suggestion['label'],
+            'ai_confidence' => $suggestion['confidence'],
         ]);
         return back()->with('success', __('Co-Pilot suggestion ready.'));
+    }
+
+    public function aiSuggest(Request $request, Task $task): JsonResponse
+    {
+        abort_unless($task->user_id === $request->user()->id, 403);
+        $suggestion = $this->aiOrHeuristic($request, $task);
+        $task->update([
+            'ai_suggestion' => $suggestion['label'],
+            'ai_confidence' => $suggestion['confidence'],
+        ]);
+        return response()->json($suggestion);
+    }
+
+    /**
+     * Returns ['label' => string, 'confidence' => float, 'rationale' => string, 'source' => 'ai'|'heuristic']
+     */
+    private function aiOrHeuristic(Request $request, Task $task): array
+    {
+        $system = "You classify a manager's task into the 'Only-You-Principle' matrix. "
+            . "Return ONLY JSON with keys: label (one of: keep:strategy, keep:key_decisions, keep:key_people, keep:responsibility, delegate, drop), "
+            . "confidence (0.0-1.0), rationale (short, 1 sentence, same language as the task).";
+
+        $user_msg = "TITLE: " . $task->title . "\nDESCRIPTION: " . ($task->description ?? '(none)') . "\n\n"
+            . "Classify using: Strategy & direction / Key decisions with scope / Select & develop key people / Take responsibility. "
+            . "If someone else can do it at least as well → delegate. If no clear goal → drop.";
+
+        $json = $this->ai->promptJsonFor($request->user(), $system, $user_msg);
+        if ($json && isset($json['label'])) {
+            return [
+                'label' => (string) $json['label'],
+                'confidence' => (float) ($json['confidence'] ?? 0.8),
+                'rationale' => (string) ($json['rationale'] ?? ''),
+                'source' => 'ai',
+            ];
+        }
+
+        return [
+            'label' => $this->heuristicSuggestion($task),
+            'confidence' => 0.55,
+            'rationale' => 'Heuristic fallback (no AI key configured).',
+            'source' => 'heuristic',
+        ];
     }
 
     private function heuristicSuggestion(Task $task): string

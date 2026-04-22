@@ -62,6 +62,11 @@ class User extends Authenticatable
         return $this->hasMany(Integration::class);
     }
 
+    public function aiSetting()
+    {
+        return $this->hasOne(AiSetting::class);
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *

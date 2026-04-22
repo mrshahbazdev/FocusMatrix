@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AiController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DelegationController;
@@ -45,4 +46,13 @@ Route::middleware([
     Route::get('/calendar', [CalendarController::class, 'index'])->name('calendar.index');
     Route::post('/calendar/focus-block/{task}', [CalendarController::class, 'focusBlock'])->name('calendar.focus-block');
     Route::post('/calendar/import-weak', [CalendarController::class, 'importWeakToInbox'])->name('calendar.import-weak');
+
+    Route::get('/settings/ai', [AiController::class, 'index'])->name('ai.index');
+    Route::put('/settings/ai', [AiController::class, 'update'])->name('ai.update');
+    Route::post('/settings/ai/test', [AiController::class, 'test'])->name('ai.test');
+    Route::delete('/settings/ai', [AiController::class, 'destroy'])->name('ai.destroy');
+
+    Route::post('/tasks/{task}/ai-suggest', [TriageController::class, 'aiSuggest'])->name('tasks.ai-suggest');
+    Route::post('/delegations/draft', [DelegationController::class, 'aiDraft'])->name('delegations.ai-draft');
+    Route::post('/self-check/insights', [SelfCheckController::class, 'aiInsights'])->name('self-check.ai-insights');
 });

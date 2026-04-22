@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\SelfCheck;
 use App\Models\Task;
+use App\Services\Ai\AiManager;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -12,6 +14,36 @@ use Inertia\Response;
 
 class SelfCheckController extends Controller
 {
+    public function __construct(private readonly AiManager $ai) {}
+
+    public function aiInsights(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        $now = Carbon::now();
+        $current = SelfCheck::where('user_id', $user->id)
+            ->where('year', $now->year)->where('week', $now->weekOfYear)->first();
+        if (! $current) {
+            return response()->json(['ok' => false, 'message' => 'No current self-check found.'], 200);
+        }
+
+        $locale = $user->locale ?? app()->getLocale();
+        $system = "You are a coach for managers following the Only-You-Principle. "
+            . "Given weekly self-check answers, produce 3-5 short, concrete insights and 1 focus recommendation for next week. "
+            . "Return JSON: {insights: string[], next_week_focus: string}. Language: " . $locale . ".";
+        $user_msg = "FOCUS SCORE: {$current->focus_score}%\n"
+            . "Q1 Others could do: " . ($current->q1_others_could_do ?? '(empty)') . "\n"
+            . "Q2 Delegated too late: " . ($current->q2_delegated_late ?? '(empty)') . "\n"
+            . "Q3 To omit next week: " . ($current->q3_to_omit_next_week ?? '(empty)') . "\n"
+            . "Q4 Focused decisions: " . ($current->q4_focused_decisions ?? '(empty)');
+
+        $json = $this->ai->promptJsonFor($user, $system, $user_msg);
+        if (! $json) {
+            return response()->json(['ok' => false, 'message' => 'AI not configured. Add your API key in Settings → AI.'], 200);
+        }
+        return response()->json(['ok' => true, 'insights' => $json]);
+    }
+
+
     public function index(Request $request): Response
     {
         $user = $request->user();
