@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AiController;
+use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\BillingController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\DashboardController;
@@ -76,6 +77,8 @@ Route::middleware([
     Route::get('/billing/portal', [BillingController::class, 'portal'])->name('billing.portal');
     Route::post('/billing/cancel', [BillingController::class, 'cancel'])->name('billing.cancel');
     Route::post('/billing/resume', [BillingController::class, 'resume'])->name('billing.resume');
+
+    Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics.index');
 
     Route::get('/gdpr/export', [LegalController::class, 'exportData'])->name('gdpr.export');
     Route::post('/gdpr/delete', [LegalController::class, 'requestDeletion'])->name('gdpr.delete');
