@@ -21,7 +21,8 @@
         "ai": "KI Co‑Pilot",
         "analytics": "Team‑Analyse",
         "billing": "Abrechnung",
-        "settings": "Einstellungen"
+        "settings": "Einstellungen",
+        "assigned": "An mich delegiert"
     },
     "legal": {
         "legal": "Rechtliches",
@@ -485,5 +486,38 @@
         "try_again": "Erneut versuchen",
         "unsupported": "Ihr Browser unterstützt keine Sprach‑Erfassung. Nutzen Sie Chrome, Edge oder Safari.",
         "permission_denied": "Mikrofon‑Zugriff verweigert. Browser‑Einstellungen prüfen."
+    },
+    "assigned": {
+        "intro": "Diese Delegationen wurden Ihnen von Ihrer Führung zugewiesen. Nehmen Sie sie an, um die Verantwortung zu übernehmen, oder lehnen Sie mit Begründung ab.",
+        "empty": "Keine offenen Delegationen – sehr gut.",
+        "goal": "Ziel",
+        "resources": "Ressourcen",
+        "decline_reason": "Ablehnungsgrund",
+        "open": "Details öffnen",
+        "accept": "Annehmen",
+        "decline": "Ablehnen",
+        "confirm_accept": "Verantwortung für „{title}“ übernehmen?",
+        "already_accepted": "Sie haben diese Delegation angenommen",
+        "already_declined": "Sie haben diese Delegation abgelehnt",
+        "decline_modal_title": "Diese Delegation ablehnen",
+        "decline_reason_label": "Warum können Sie das nicht übernehmen? (optional)",
+        "decline_reason_ph": "z. B. ich bin diesen Sprint bereits voll ausgelastet, oder hierfür braucht es jemanden mit X",
+        "cancel": "Abbrechen",
+        "confirm_decline": "Delegation ablehnen",
+        "status": {
+            "open": "Offen",
+            "invited": "Wartet auf Sie",
+            "accepted": "Angenommen",
+            "declined": "Abgelehnt",
+            "in_progress": "In Arbeit",
+            "done": "Erledigt",
+            "overdue": "Überfällig",
+            "cancelled": "Abgebrochen"
+        },
+        "scope": {
+            "inform": "Nur informieren",
+            "consult": "Erst Rücksprache",
+            "decide": "Volle Entscheidung"
+        }
     }
 }

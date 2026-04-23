@@ -38,6 +38,11 @@ Route::middleware([
     Route::get('/tasks/{task}/triage', [TriageController::class, 'show'])->name('tasks.triage');
     Route::post('/tasks/{task}/triage', [TriageController::class, 'decide'])->name('tasks.triage.decide');
 
+    Route::get('/assigned', [DelegationController::class, 'assignedIndex'])->name('delegations.assigned');
+    Route::post('/delegations/{delegation}/accept', [DelegationController::class, 'accept'])->name('delegations.accept');
+    Route::post('/delegations/{delegation}/decline', [DelegationController::class, 'decline'])->name('delegations.decline');
+    Route::get('/assigned/{token}/accept', [DelegationController::class, 'acceptByToken'])->name('delegations.accept.token');
+    Route::get('/assigned/{token}/decline', [DelegationController::class, 'declineByToken'])->name('delegations.decline.token');
     Route::resource('delegations', DelegationController::class)->except(['edit']);
 
     Route::get('/kill-list', [KillListController::class, 'index'])->name('kill-list.index');

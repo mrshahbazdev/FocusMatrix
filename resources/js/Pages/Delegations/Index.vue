@@ -9,6 +9,9 @@ const { t } = useI18n();
 
 const statusTones = {
     open: 'bg-navy-100 text-navy-800',
+    invited: 'bg-accent/10 text-accent',
+    accepted: 'bg-emerald-100 text-emerald-800',
+    declined: 'bg-rose-100 text-rose-800',
     in_progress: 'bg-amber-100 text-amber-800',
     done: 'bg-emerald-100 text-emerald-800',
     overdue: 'bg-rose-100 text-rose-800',

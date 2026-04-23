@@ -8,6 +8,7 @@ import CookieBanner from '@/Components/CookieBanner.vue';
 import {
     HomeIcon,
     InboxIcon,
+    InboxArrowDownIcon,
     CheckBadgeIcon,
     UserGroupIcon,
     XCircleIcon,
@@ -26,11 +27,19 @@ const page = usePage();
 
 const user = computed(() => page.props.auth?.user);
 const flash = computed(() => page.props.flash || {});
+const assignedPending = computed(() => page.props.assigned_pending_count || 0);
 
 const nav = computed(() => [
     { label: t('nav.dashboard'), href: route('dashboard'), icon: HomeIcon, active: route().current('dashboard') },
     { label: t('nav.inbox'), href: route('tasks.index', { status: 'inbox' }), icon: InboxIcon, active: route().current('tasks.index') },
-    { label: t('nav.delegate'), href: route('delegations.index'), icon: UserGroupIcon, active: route().current('delegations.*') },
+    {
+        label: t('nav.assigned'),
+        href: route('delegations.assigned'),
+        icon: InboxArrowDownIcon,
+        active: route().current('delegations.assigned'),
+        badge: assignedPending.value,
+    },
+    { label: t('nav.delegate'), href: route('delegations.index'), icon: UserGroupIcon, active: route().current('delegations.index') || route().current('delegations.create') || route().current('delegations.show') || route().current('delegations.store') },
     { label: t('drop.kill_list'), href: route('kill-list.index'), icon: XCircleIcon, active: route().current('kill-list.*') },
     { label: t('nav.calendar'), href: route('calendar.index'), icon: CalendarDaysIcon, active: route().current('calendar.*') },
     { label: t('nav.selfcheck'), href: route('self-check.index'), icon: CheckBadgeIcon, active: route().current('self-check.*') },
@@ -76,7 +85,10 @@ function logout() {
                     ]"
                 >
                     <component :is="item.icon" class="w-5 h-5" />
-                    <span>{{ item.label }}</span>
+                    <span class="flex-1">{{ item.label }}</span>
+                    <span v-if="item.badge && item.badge > 0" class="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-accent text-white text-[10px] font-semibold">
+                        {{ item.badge }}
+                    </span>
                 </Link>
             </nav>
             <div class="p-3 border-t border-navy-800 space-y-1">

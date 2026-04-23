@@ -2,13 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\DelegationAssigned;
 use App\Models\Delegation;
 use App\Models\Task;
+use App\Models\User;
 use App\Services\Ai\AiManager;
 use App\Services\WebhookNotifier;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -48,15 +52,26 @@ class DelegationController extends Controller
         return response()->json(['ok' => true, 'draft' => $json]);
     }
 
-
     public function index(Request $request): Response
     {
         $delegations = Delegation::where('delegator_id', $request->user()->id)
-            ->with(['task:id,title', 'delegateUser:id,name,profile_photo_path'])
+            ->with(['task:id,title', 'delegateUser:id,name,email,profile_photo_path'])
             ->latest()
             ->get();
 
         return Inertia::render('Delegations/Index', [
+            'delegations' => $delegations,
+        ]);
+    }
+
+    public function assignedIndex(Request $request): Response
+    {
+        $delegations = Delegation::where('delegate_user_id', $request->user()->id)
+            ->with(['task:id,title,description', 'delegator:id,name,email,profile_photo_path'])
+            ->latest()
+            ->get();
+
+        return Inertia::render('Delegations/Assigned', [
             'delegations' => $delegations,
         ]);
     }
@@ -102,15 +117,36 @@ class DelegationController extends Controller
         $task = Task::where('user_id', $request->user()->id)->findOrFail($data['task_id']);
         $task->update(['status' => Task::STATUS_DELEGATE]);
 
+        $isTeamMember = !empty($data['delegate_user_id']);
+        $initialStatus = $isTeamMember ? Delegation::STATUS_INVITED : 'open';
+
         $delegation = Delegation::updateOrCreate(
             ['task_id' => $task->id],
             [
                 ...$data,
                 'delegator_id' => $request->user()->id,
-                'status' => 'open',
+                'original_owner_id' => $task->user_id,
+                'status' => $initialStatus,
                 'health_score' => 100,
+                'invited_at' => $isTeamMember ? now() : null,
+                'invite_token' => $isTeamMember ? Str::random(48) : null,
+                'accepted_at' => null,
+                'declined_at' => null,
+                'decline_reason' => null,
             ]
         );
+
+        // Email the delegate if they are a platform user
+        if ($isTeamMember) {
+            $delegate = User::find($data['delegate_user_id']);
+            if ($delegate && $delegate->email) {
+                try {
+                    Mail::to($delegate->email)->queue(new DelegationAssigned($delegation));
+                } catch (\Throwable $e) {
+                    report($e);
+                }
+            }
+        }
 
         $delegateLabel = $data['delegate_name_fallback']
             ?? optional($delegation->fresh()->delegateUser)->name
@@ -131,10 +167,92 @@ class DelegationController extends Controller
             ->with('success', __('Delegated with a clear frame.'));
     }
 
+    public function accept(Request $request, Delegation $delegation): RedirectResponse
+    {
+        $this->authorizeDelegate($request, $delegation);
+
+        if ($delegation->status === Delegation::STATUS_DECLINED) {
+            return back()->with('error', __('This delegation was declined and cannot be accepted.'));
+        }
+
+        $delegation->update([
+            'status' => Delegation::STATUS_ACCEPTED,
+            'accepted_at' => now(),
+            'declined_at' => null,
+            'decline_reason' => null,
+        ]);
+
+        // Ownership transfer: task moves to the delegate
+        if ($delegation->task) {
+            $delegation->task->update([
+                'user_id' => $delegation->delegate_user_id,
+            ]);
+        }
+
+        return redirect()->route('delegations.assigned')
+            ->with('success', __('Delegation accepted — the task is now yours.'));
+    }
+
+    public function decline(Request $request, Delegation $delegation): RedirectResponse
+    {
+        $this->authorizeDelegate($request, $delegation);
+
+        $data = $request->validate([
+            'reason' => ['nullable', 'string', 'max:1000'],
+        ]);
+
+        $delegation->update([
+            'status' => Delegation::STATUS_DECLINED,
+            'declined_at' => now(),
+            'decline_reason' => $data['reason'] ?? null,
+        ]);
+
+        // Revert ownership to original owner if it had been transferred
+        if ($delegation->task && $delegation->original_owner_id) {
+            $delegation->task->update([
+                'user_id' => $delegation->original_owner_id,
+                'status' => Task::STATUS_INBOX, // back to triage
+            ]);
+        }
+
+        return redirect()->route('delegations.assigned')
+            ->with('success', __('Delegation declined. The delegator has been notified.'));
+    }
+
+    public function acceptByToken(string $token): RedirectResponse
+    {
+        $delegation = Delegation::where('invite_token', $token)->firstOrFail();
+        if (auth()->check() && auth()->id() !== $delegation->delegate_user_id) {
+            abort(403);
+        }
+        if (!auth()->check()) {
+            session(['invite_token' => $token]);
+            return redirect()->route('login');
+        }
+        return $this->accept(request(), $delegation);
+    }
+
+    public function declineByToken(string $token): RedirectResponse
+    {
+        $delegation = Delegation::where('invite_token', $token)->firstOrFail();
+        if (auth()->check() && auth()->id() !== $delegation->delegate_user_id) {
+            abort(403);
+        }
+        if (!auth()->check()) {
+            session(['invite_token' => $token]);
+            return redirect()->route('login');
+        }
+        return $this->decline(request(), $delegation);
+    }
+
     public function show(Delegation $delegation): Response
     {
-        abort_unless($delegation->delegator_id === request()->user()->id, 403);
-        $delegation->load(['task', 'delegateUser']);
+        $user = request()->user();
+        abort_unless(
+            $delegation->delegator_id === $user->id || $delegation->delegate_user_id === $user->id,
+            403
+        );
+        $delegation->load(['task', 'delegateUser', 'delegator', 'originalOwner']);
         return Inertia::render('Delegations/Show', ['delegation' => $delegation]);
     }
 
@@ -142,7 +260,7 @@ class DelegationController extends Controller
     {
         abort_unless($delegation->delegator_id === $request->user()->id, 403);
         $data = $request->validate([
-            'status' => ['sometimes', 'in:open,in_progress,done,overdue,cancelled'],
+            'status' => ['sometimes', 'in:open,invited,accepted,declined,in_progress,done,overdue,cancelled'],
             'goal' => ['sometimes', 'string'],
             'deadline' => ['nullable', 'date'],
             'decision_scope' => ['sometimes', 'in:inform,consult,decide'],
@@ -161,4 +279,12 @@ class DelegationController extends Controller
     }
 
     public function edit() { abort(404); }
+
+    private function authorizeDelegate(Request $request, Delegation $delegation): void
+    {
+        abort_unless(
+            $request->user() && $delegation->delegate_user_id === $request->user()->id,
+            403,
+        );
+    }
 }

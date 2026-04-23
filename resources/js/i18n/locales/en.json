@@ -21,7 +21,8 @@
         "ai": "AI Co‑Pilot",
         "analytics": "Team analytics",
         "billing": "Billing",
-        "settings": "Settings"
+        "settings": "Settings",
+        "assigned": "Assigned to me"
     },
     "legal": {
         "legal": "Legal",
@@ -485,5 +486,38 @@
         "try_again": "Try again",
         "unsupported": "Your browser does not support voice capture. Use Chrome, Edge or Safari.",
         "permission_denied": "Microphone permission denied. Check your browser settings."
+    },
+    "assigned": {
+        "intro": "These delegations were sent to you by your team leads. Accept to take ownership, or decline with a reason.",
+        "empty": "No delegations waiting for you — nicely done.",
+        "goal": "Goal",
+        "resources": "Resources",
+        "decline_reason": "Decline reason",
+        "open": "Open details",
+        "accept": "Accept",
+        "decline": "Decline",
+        "confirm_accept": "Accept ownership of \"{title}\"?",
+        "already_accepted": "You accepted this delegation",
+        "already_declined": "You declined this delegation",
+        "decline_modal_title": "Decline this delegation",
+        "decline_reason_label": "Why can't you take this on? (optional)",
+        "decline_reason_ph": "e.g. I'm already at capacity this sprint, or this needs someone with X expertise",
+        "cancel": "Cancel",
+        "confirm_decline": "Decline delegation",
+        "status": {
+            "open": "Open",
+            "invited": "Waiting for you",
+            "accepted": "Accepted",
+            "declined": "Declined",
+            "in_progress": "In progress",
+            "done": "Done",
+            "overdue": "Overdue",
+            "cancelled": "Cancelled"
+        },
+        "scope": {
+            "inform": "Inform only",
+            "consult": "Consult first",
+            "decide": "Full authority"
+        }
     }
 }
