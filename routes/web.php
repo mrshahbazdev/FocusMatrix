@@ -61,6 +61,9 @@ Route::middleware([
     Route::post('/integrations/ics/regenerate', [IntegrationController::class, 'regenerateIcsToken'])->name('integrations.ics.regenerate');
 
     Route::get('/calendar', [CalendarController::class, 'index'])->name('calendar.index');
+    Route::post('/calendar/events', [CalendarController::class, 'storeEvent'])->name('calendar.events.store');
+    Route::patch('/calendar/events/{event}', [CalendarController::class, 'updateEvent'])->name('calendar.events.update');
+    Route::delete('/calendar/events/{event}', [CalendarController::class, 'destroyEvent'])->name('calendar.events.destroy');
     Route::post('/calendar/focus-block/{task}', [CalendarController::class, 'focusBlock'])->name('calendar.focus-block');
     Route::post('/calendar/import-weak', [CalendarController::class, 'importWeakToInbox'])->name('calendar.import-weak');
 
