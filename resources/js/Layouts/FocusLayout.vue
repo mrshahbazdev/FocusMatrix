@@ -11,6 +11,7 @@ import {
     InboxArrowDownIcon,
     CheckBadgeIcon,
     UserGroupIcon,
+    UsersIcon,
     XCircleIcon,
     CalendarDaysIcon,
     BuildingOffice2Icon,
@@ -28,6 +29,13 @@ const page = usePage();
 const user = computed(() => page.props.auth?.user);
 const flash = computed(() => page.props.flash || {});
 const assignedPending = computed(() => page.props.assigned_pending_count || 0);
+const currentTeam = computed(() => user.value?.current_team);
+const teamHref = computed(() => currentTeam.value
+    ? route('teams.show', currentTeam.value.id)
+    : route('teams.create'));
+const teamLabel = computed(() => currentTeam.value
+    ? currentTeam.value.name
+    : t('nav.team_create'));
 
 const nav = computed(() => [
     { label: t('nav.dashboard'), href: route('dashboard'), icon: HomeIcon, active: route().current('dashboard') },
@@ -44,6 +52,13 @@ const nav = computed(() => [
     { label: t('nav.calendar'), href: route('calendar.index'), icon: CalendarDaysIcon, active: route().current('calendar.*') },
     { label: t('nav.selfcheck'), href: route('self-check.index'), icon: CheckBadgeIcon, active: route().current('self-check.*') },
     { label: t('nav.orgcheck'), href: route('org-check.index'), icon: BuildingOffice2Icon, active: route().current('org-check.*') },
+    {
+        label: teamLabel.value,
+        href: teamHref.value,
+        icon: UsersIcon,
+        active: route().current('teams.*') || route().current('team-members.*') || route().current('current-team.*'),
+        sub: currentTeam.value ? t('nav.team_manage') : null,
+    },
     { label: t('nav.integrations'), href: route('integrations.index'), icon: Squares2X2Icon, active: route().current('integrations.*') },
     { label: t('nav.ai'), href: route('ai.index'), icon: SparklesIcon, active: route().current('ai.*') },
     { label: t('nav.analytics'), href: route('analytics.index'), icon: ChartBarIcon, active: route().current('analytics.*') },

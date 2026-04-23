@@ -22,7 +22,10 @@
         "analytics": "Team‑Analyse",
         "billing": "Abrechnung",
         "settings": "Einstellungen",
-        "assigned": "An mich delegiert"
+        "assigned": "An mich delegiert",
+        "team": "Team",
+        "team_manage": "Team verwalten",
+        "team_create": "Team erstellen"
     },
     "legal": {
         "legal": "Rechtliches",

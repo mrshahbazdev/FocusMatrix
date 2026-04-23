@@ -22,7 +22,10 @@
         "analytics": "Team analytics",
         "billing": "Billing",
         "settings": "Settings",
-        "assigned": "Assigned to me"
+        "assigned": "Assigned to me",
+        "team": "Team",
+        "team_manage": "Manage team",
+        "team_create": "Create a team"
     },
     "legal": {
         "legal": "Legal",
