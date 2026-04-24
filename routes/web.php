@@ -16,9 +16,30 @@ use App\Http\Controllers\SelfCheckController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TriageController;
 use App\Http\Controllers\VoiceController;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Mail\Message;
 
 Route::get('/', LandingController::class)->name('landing');
+
+Route::get('/test-email', function () {
+    try {
+        Mail::raw('This is a test email from FocusMatrix to verify SMTP configuration is working correctly.', function (Message $message) {
+            $message->to('mrshahbaznns@gmail.com')
+                    ->subject('FocusMatrix SMTP Test - Configuration Verified');
+        });
+
+        return response()->json([
+            'status'  => 'success',
+            'message' => 'Test email sent successfully to mrshahbaznns@gmail.com',
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status'  => 'error',
+            'message' => $e->getMessage(),
+        ], 500);
+    }
+})->name('test.email');
 
 Route::get('/legal/impressum', [LegalController::class, 'impressum'])->name('legal.impressum');
 Route::get('/legal/privacy', [LegalController::class, 'privacy'])->name('legal.privacy');
