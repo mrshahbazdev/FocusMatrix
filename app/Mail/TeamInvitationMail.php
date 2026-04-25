@@ -5,7 +5,6 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\URL;
 use Laravel\Jetstream\TeamInvitation;
 
 class TeamInvitationMail extends Mailable
@@ -21,11 +20,7 @@ class TeamInvitationMail extends Mailable
 
     public function build()
     {
-        $relativeSigned = URL::signedRoute('team-invitations.accept', [
-            'invitation' => $this->invitation,
-        ], absolute: false);
-
-        $acceptUrl = rtrim(config('app.url'), '/').$relativeSigned;
+        $acceptUrl = route('accept-invitation', ['invitation' => $this->invitation->id]);
 
         return $this->markdown('emails.team-invitation', [
             'acceptUrl' => $acceptUrl,

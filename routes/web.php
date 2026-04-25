@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AcceptInvitationController;
 use App\Http\Controllers\AiController;
 use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\BillingController;
@@ -114,4 +115,7 @@ Route::middleware([
 
     Route::get('/gdpr/export', [LegalController::class, 'exportData'])->name('gdpr.export');
     Route::post('/gdpr/delete', [LegalController::class, 'requestDeletion'])->name('gdpr.delete');
+
+    Route::get('/accept-invitation/{invitation}', [AcceptInvitationController::class, 'accept'])
+        ->name('accept-invitation');
 });
