@@ -37,11 +37,14 @@ const submit = () => {
             <AuthenticationCardLogo />
         </template>
 
-        <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
+        <h2 class="font-display text-2xl font-bold text-navy-900 mb-1">Welcome back</h2>
+        <p class="text-sm text-graphite-500 mb-6">Sign in to your FocusMatrix account</p>
+
+        <div v-if="status" class="mb-4 px-4 py-2 rounded-lg bg-emerald-50 border border-emerald-200 text-sm text-emerald-700">
             {{ status }}
         </div>
 
-        <form @submit.prevent="submit">
+        <form @submit.prevent="submit" class="space-y-4">
             <div>
                 <InputLabel for="email" value="Email" />
                 <TextInput
@@ -52,12 +55,18 @@ const submit = () => {
                     required
                     autofocus
                     autocomplete="username"
+                    placeholder="you@company.com"
                 />
                 <InputError class="mt-2" :message="form.errors.email" />
             </div>
 
-            <div class="mt-4">
-                <InputLabel for="password" value="Password" />
+            <div>
+                <div class="flex items-center justify-between">
+                    <InputLabel for="password" value="Password" />
+                    <Link v-if="canResetPassword" :href="route('password.request')" class="text-xs text-accent hover:text-accent/80">
+                        Forgot password?
+                    </Link>
+                </div>
                 <TextInput
                     id="password"
                     v-model="form.password"
@@ -65,26 +74,24 @@ const submit = () => {
                     class="mt-1 block w-full"
                     required
                     autocomplete="current-password"
+                    placeholder="Enter your password"
                 />
                 <InputError class="mt-2" :message="form.errors.password" />
             </div>
 
-            <div class="block mt-4">
-                <label class="flex items-center">
-                    <Checkbox v-model:checked="form.remember" name="remember" />
-                    <span class="ms-2 text-sm text-gray-600">Remember me</span>
-                </label>
-            </div>
+            <label class="flex items-center gap-2">
+                <Checkbox v-model:checked="form.remember" name="remember" />
+                <span class="text-sm text-graphite-600">Remember me</span>
+            </label>
 
-            <div class="flex items-center justify-end mt-4">
-                <Link v-if="canResetPassword" :href="route('password.request')" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    Forgot your password?
-                </Link>
+            <PrimaryButton class="w-full" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                Sign in
+            </PrimaryButton>
 
-                <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Log in
-                </PrimaryButton>
-            </div>
+            <p class="text-center text-sm text-graphite-500">
+                Don't have an account?
+                <Link :href="route('register')" class="font-medium text-accent hover:text-accent/80">Create one</Link>
+            </p>
         </form>
     </AuthenticationCard>
 </template>

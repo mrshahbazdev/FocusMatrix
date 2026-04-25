@@ -18,7 +18,6 @@ const submit = () => {
     form.post(route('password.confirm'), {
         onFinish: () => {
             form.reset();
-
             passwordInput.value.focus();
         },
     });
@@ -33,11 +32,12 @@ const submit = () => {
             <AuthenticationCardLogo />
         </template>
 
-        <div class="mb-4 text-sm text-gray-600">
-            This is a secure area of the application. Please confirm your password before continuing.
-        </div>
+        <h2 class="font-display text-2xl font-bold text-navy-900 mb-1">Confirm access</h2>
+        <p class="text-sm text-graphite-500 mb-6">
+            This is a secure area. Please confirm your password before continuing.
+        </p>
 
-        <form @submit.prevent="submit">
+        <form @submit.prevent="submit" class="space-y-4">
             <div>
                 <InputLabel for="password" value="Password" />
                 <TextInput
@@ -53,11 +53,9 @@ const submit = () => {
                 <InputError class="mt-2" :message="form.errors.password" />
             </div>
 
-            <div class="flex justify-end mt-4">
-                <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Confirm
-                </PrimaryButton>
-            </div>
+            <PrimaryButton class="w-full" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                Confirm
+            </PrimaryButton>
         </form>
     </AuthenticationCard>
 </template>

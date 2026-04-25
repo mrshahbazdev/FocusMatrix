@@ -1,5 +1,5 @@
 <script setup>
-import { Head, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm } from '@inertiajs/vue3';
 import AuthenticationCard from '@/Components/AuthenticationCard.vue';
 import AuthenticationCardLogo from '@/Components/AuthenticationCardLogo.vue';
 import InputError from '@/Components/InputError.vue';
@@ -28,15 +28,16 @@ const submit = () => {
             <AuthenticationCardLogo />
         </template>
 
-        <div class="mb-4 text-sm text-gray-600">
-            Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.
-        </div>
+        <h2 class="font-display text-2xl font-bold text-navy-900 mb-1">Reset password</h2>
+        <p class="text-sm text-graphite-500 mb-6">
+            Enter your email and we'll send you a reset link.
+        </p>
 
-        <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
+        <div v-if="status" class="mb-4 px-4 py-2 rounded-lg bg-emerald-50 border border-emerald-200 text-sm text-emerald-700">
             {{ status }}
         </div>
 
-        <form @submit.prevent="submit">
+        <form @submit.prevent="submit" class="space-y-4">
             <div>
                 <InputLabel for="email" value="Email" />
                 <TextInput
@@ -47,15 +48,19 @@ const submit = () => {
                     required
                     autofocus
                     autocomplete="username"
+                    placeholder="you@company.com"
                 />
                 <InputError class="mt-2" :message="form.errors.email" />
             </div>
 
-            <div class="flex items-center justify-end mt-4">
-                <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Email Password Reset Link
-                </PrimaryButton>
-            </div>
+            <PrimaryButton class="w-full" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                Send reset link
+            </PrimaryButton>
+
+            <p class="text-center text-sm text-graphite-500">
+                Remember your password?
+                <Link :href="route('login')" class="font-medium text-accent hover:text-accent/80">Sign in</Link>
+            </p>
         </form>
     </AuthenticationCard>
 </template>
