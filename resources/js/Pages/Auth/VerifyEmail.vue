@@ -26,36 +26,36 @@ const verificationLinkSent = computed(() => props.status === 'verification-link-
             <AuthenticationCardLogo />
         </template>
 
-        <div class="mb-4 text-sm text-gray-600">
-            Before continuing, could you verify your email address by clicking on the link we just emailed to you? If you didn't receive the email, we will gladly send you another.
-        </div>
+        <h2 class="font-display text-2xl font-bold text-navy-900 mb-1">Verify your email</h2>
+        <p class="text-sm text-graphite-500 mb-6">
+            We sent a verification link to your email. Please click on it to continue.
+        </p>
 
-        <div v-if="verificationLinkSent" class="mb-4 font-medium text-sm text-green-600">
-            A new verification link has been sent to the email address you provided in your profile settings.
+        <div v-if="verificationLinkSent" class="mb-4 px-4 py-2 rounded-lg bg-emerald-50 border border-emerald-200 text-sm text-emerald-700">
+            A new verification link has been sent to your email.
         </div>
 
         <form @submit.prevent="submit">
-            <div class="mt-4 flex items-center justify-between">
-                <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Resend Verification Email
-                </PrimaryButton>
+            <PrimaryButton class="w-full" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                Resend verification email
+            </PrimaryButton>
 
-                <div>
-                    <Link
-                        :href="route('profile.show')"
-                        class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                    >
-                        Edit Profile</Link>
+            <div class="mt-4 flex items-center justify-between text-sm">
+                <Link
+                    :href="route('profile.show')"
+                    class="text-accent hover:text-accent/80"
+                >
+                    Edit profile
+                </Link>
 
-                    <Link
-                        :href="route('logout')"
-                        method="post"
-                        as="button"
-                        class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ms-2"
-                    >
-                        Log Out
-                    </Link>
-                </div>
+                <Link
+                    :href="route('logout')"
+                    method="post"
+                    as="button"
+                    class="text-graphite-500 hover:text-navy-800"
+                >
+                    Log out
+                </Link>
             </div>
         </form>
     </AuthenticationCard>

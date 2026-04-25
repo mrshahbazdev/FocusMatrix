@@ -45,18 +45,18 @@ const submit = () => {
             <AuthenticationCardLogo />
         </template>
 
-        <div class="mb-4 text-sm text-gray-600">
-            <template v-if="! recovery">
-                Please confirm access to your account by entering the authentication code provided by your authenticator application.
+        <h2 class="font-display text-2xl font-bold text-navy-900 mb-1">Two-factor authentication</h2>
+        <p class="text-sm text-graphite-500 mb-6">
+            <template v-if="!recovery">
+                Enter the code from your authenticator app.
             </template>
-
             <template v-else>
-                Please confirm access to your account by entering one of your emergency recovery codes.
+                Enter one of your emergency recovery codes.
             </template>
-        </div>
+        </p>
 
-        <form @submit.prevent="submit">
-            <div v-if="! recovery">
+        <form @submit.prevent="submit" class="space-y-4">
+            <div v-if="!recovery">
                 <InputLabel for="code" value="Code" />
                 <TextInput
                     id="code"
@@ -67,6 +67,7 @@ const submit = () => {
                     class="mt-1 block w-full"
                     autofocus
                     autocomplete="one-time-code"
+                    placeholder="6-digit code"
                 />
                 <InputError class="mt-2" :message="form.errors.code" />
             </div>
@@ -84,19 +85,18 @@ const submit = () => {
                 <InputError class="mt-2" :message="form.errors.recovery_code" />
             </div>
 
-            <div class="flex items-center justify-end mt-4">
-                <button type="button" class="text-sm text-gray-600 hover:text-gray-900 underline cursor-pointer" @click.prevent="toggleRecovery">
-                    <template v-if="! recovery">
+            <div class="flex items-center justify-between">
+                <button type="button" class="text-sm text-accent hover:text-accent/80" @click.prevent="toggleRecovery">
+                    <template v-if="!recovery">
                         Use a recovery code
                     </template>
-
                     <template v-else>
                         Use an authentication code
                     </template>
                 </button>
 
-                <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Log in
+                <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                    Verify
                 </PrimaryButton>
             </div>
         </form>

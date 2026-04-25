@@ -31,9 +31,12 @@ const submit = () => {
             <AuthenticationCardLogo />
         </template>
 
-        <form @submit.prevent="submit">
+        <h2 class="font-display text-2xl font-bold text-navy-900 mb-1">Create your account</h2>
+        <p class="text-sm text-graphite-500 mb-6">Start making better decisions about your time</p>
+
+        <form @submit.prevent="submit" class="space-y-4">
             <div>
-                <InputLabel for="name" value="Name" />
+                <InputLabel for="name" value="Full name" />
                 <TextInput
                     id="name"
                     v-model="form.name"
@@ -42,11 +45,12 @@ const submit = () => {
                     required
                     autofocus
                     autocomplete="name"
+                    placeholder="Jane Doe"
                 />
                 <InputError class="mt-2" :message="form.errors.name" />
             </div>
 
-            <div class="mt-4">
+            <div>
                 <InputLabel for="email" value="Email" />
                 <TextInput
                     id="email"
@@ -55,58 +59,59 @@ const submit = () => {
                     class="mt-1 block w-full"
                     required
                     autocomplete="username"
+                    placeholder="you@company.com"
                 />
                 <InputError class="mt-2" :message="form.errors.email" />
             </div>
 
-            <div class="mt-4">
-                <InputLabel for="password" value="Password" />
-                <TextInput
-                    id="password"
-                    v-model="form.password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    required
-                    autocomplete="new-password"
-                />
-                <InputError class="mt-2" :message="form.errors.password" />
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <InputLabel for="password" value="Password" />
+                    <TextInput
+                        id="password"
+                        v-model="form.password"
+                        type="password"
+                        class="mt-1 block w-full"
+                        required
+                        autocomplete="new-password"
+                    />
+                    <InputError class="mt-2" :message="form.errors.password" />
+                </div>
+                <div>
+                    <InputLabel for="password_confirmation" value="Confirm" />
+                    <TextInput
+                        id="password_confirmation"
+                        v-model="form.password_confirmation"
+                        type="password"
+                        class="mt-1 block w-full"
+                        required
+                        autocomplete="new-password"
+                    />
+                    <InputError class="mt-2" :message="form.errors.password_confirmation" />
+                </div>
             </div>
 
-            <div class="mt-4">
-                <InputLabel for="password_confirmation" value="Confirm Password" />
-                <TextInput
-                    id="password_confirmation"
-                    v-model="form.password_confirmation"
-                    type="password"
-                    class="mt-1 block w-full"
-                    required
-                    autocomplete="new-password"
-                />
-                <InputError class="mt-2" :message="form.errors.password_confirmation" />
+            <div v-if="$page.props.jetstream.hasTermsAndPrivacyPolicyFeature">
+                <label class="flex items-start gap-2">
+                    <Checkbox id="terms" v-model:checked="form.terms" name="terms" required class="mt-0.5" />
+                    <span class="text-sm text-graphite-600">
+                        I agree to the
+                        <a target="_blank" :href="route('terms.show')" class="text-accent hover:text-accent/80">Terms of Service</a>
+                        and
+                        <a target="_blank" :href="route('policy.show')" class="text-accent hover:text-accent/80">Privacy Policy</a>
+                    </span>
+                </label>
+                <InputError class="mt-2" :message="form.errors.terms" />
             </div>
 
-            <div v-if="$page.props.jetstream.hasTermsAndPrivacyPolicyFeature" class="mt-4">
-                <InputLabel for="terms">
-                    <div class="flex items-center">
-                        <Checkbox id="terms" v-model:checked="form.terms" name="terms" required />
+            <PrimaryButton class="w-full" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                Create account
+            </PrimaryButton>
 
-                        <div class="ms-2">
-                            I agree to the <a target="_blank" :href="route('terms.show')" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Terms of Service</a> and <a target="_blank" :href="route('policy.show')" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Privacy Policy</a>
-                        </div>
-                    </div>
-                    <InputError class="mt-2" :message="form.errors.terms" />
-                </InputLabel>
-            </div>
-
-            <div class="flex items-center justify-end mt-4">
-                <Link :href="route('login')" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    Already registered?
-                </Link>
-
-                <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Register
-                </PrimaryButton>
-            </div>
+            <p class="text-center text-sm text-graphite-500">
+                Already have an account?
+                <Link :href="route('login')" class="font-medium text-accent hover:text-accent/80">Sign in</Link>
+            </p>
         </form>
     </AuthenticationCard>
 </template>
