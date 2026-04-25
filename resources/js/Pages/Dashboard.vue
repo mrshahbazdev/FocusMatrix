@@ -62,9 +62,9 @@ const statusStyle = (status) => {
         <template #breadcrumbs>FocusMatrix</template>
         <template #title>{{ t('dashboard.greeting') }} {{ page.props.auth.user.name }}</template>
 
-        <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6">
             <!-- Stats row -->
-            <div class="xl:col-span-3 grid grid-cols-2 md:grid-cols-5 gap-4">
+            <div class="xl:col-span-3 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4">
                 <StatCard tone="accent" :label="t('dashboard.focus_score')" :value="`${stats.focus_score}%`" :sub="t('dashboard.focus_score_sub')" />
                 <StatCard tone="navy" :label="t('dashboard.kept')" :value="stats.kept" />
                 <StatCard tone="navy" :label="t('dashboard.delegated')" :value="stats.delegated" />

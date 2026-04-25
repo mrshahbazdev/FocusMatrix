@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { Link, usePage, router } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 import BrandMark from '@/Components/BrandMark.vue';
@@ -21,10 +21,14 @@ import {
     CreditCardIcon,
     Cog6ToothIcon,
     ArrowLeftOnRectangleIcon,
+    Bars3Icon,
+    XMarkIcon,
 } from '@heroicons/vue/24/outline';
 
 const { t } = useI18n();
 const page = usePage();
+
+const sidebarOpen = ref(false);
 
 const user = computed(() => page.props.auth?.user);
 const flash = computed(() => page.props.flash || {});
@@ -65,6 +69,10 @@ const nav = computed(() => [
     { label: t('nav.billing'), href: route('billing.index'), icon: CreditCardIcon, active: route().current('billing.*') },
 ]);
 
+watch(() => page.url, () => {
+    sidebarOpen.value = false;
+});
+
 function logout() {
     router.post(route('logout'));
 }
@@ -72,9 +80,21 @@ function logout() {
 
 <template>
     <div class="min-h-screen flex bg-graphite-50">
+        <!-- Mobile sidebar backdrop -->
+        <div
+            v-if="sidebarOpen"
+            class="fixed inset-0 z-40 bg-black/50 lg:hidden"
+            @click="sidebarOpen = false"
+        />
+
         <!-- Sidebar -->
-        <aside class="w-64 shrink-0 bg-navy-900 text-navy-100 flex flex-col">
-            <div class="h-16 px-5 flex items-center border-b border-navy-800">
+        <aside
+            :class="[
+                'fixed inset-y-0 left-0 z-50 w-64 bg-navy-900 text-navy-100 flex flex-col transform transition-transform duration-200 ease-in-out lg:static lg:translate-x-0 lg:shrink-0',
+                sidebarOpen ? 'translate-x-0' : '-translate-x-full',
+            ]"
+        >
+            <div class="h-16 px-5 flex items-center justify-between border-b border-navy-800">
                 <Link href="/" class="text-white">
                     <span class="inline-flex items-center gap-2 font-display text-lg font-semibold">
                         <span class="grid grid-cols-2 grid-rows-2 gap-0.5 w-6 h-6">
@@ -86,8 +106,11 @@ function logout() {
                         Focus<span class="text-accent">Matrix</span>
                     </span>
                 </Link>
+                <button @click="sidebarOpen = false" class="lg:hidden text-navy-200 hover:text-white">
+                    <XMarkIcon class="w-5 h-5" />
+                </button>
             </div>
-            <nav class="flex-1 p-3 space-y-1">
+            <nav class="flex-1 overflow-y-auto p-3 space-y-1">
                 <Link
                     v-for="item in nav"
                     :key="item.label"
@@ -120,13 +143,18 @@ function logout() {
 
         <!-- Main -->
         <div class="flex-1 flex flex-col min-w-0">
-            <header class="h-16 bg-white border-b border-graphite-200 flex items-center justify-between px-8">
-                <div>
-                    <h1 class="text-sm text-graphite-500">
-                        <slot name="breadcrumbs">{{ t('brand.name') }}</slot>
-                    </h1>
-                    <div class="text-lg font-display font-semibold text-navy-900 -mt-0.5">
-                        <slot name="title" />
+            <header class="h-16 bg-white border-b border-graphite-200 flex items-center justify-between px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center gap-3">
+                    <button @click="sidebarOpen = true" class="lg:hidden text-navy-800 hover:text-navy-600">
+                        <Bars3Icon class="w-6 h-6" />
+                    </button>
+                    <div>
+                        <h1 class="text-sm text-graphite-500">
+                            <slot name="breadcrumbs">{{ t('brand.name') }}</slot>
+                        </h1>
+                        <div class="text-lg font-display font-semibold text-navy-900 -mt-0.5">
+                            <slot name="title" />
+                        </div>
                     </div>
                 </div>
                 <div class="flex items-center gap-4">
@@ -143,14 +171,14 @@ function logout() {
                 </div>
             </header>
 
-            <div v-if="flash.success" class="mx-8 mt-4 px-4 py-2 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm">
+            <div v-if="flash.success" class="mx-4 sm:mx-6 lg:mx-8 mt-4 px-4 py-2 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm">
                 {{ flash.success }}
             </div>
-            <div v-if="flash.error" class="mx-8 mt-4 px-4 py-2 rounded-lg bg-rose-50 border border-rose-200 text-rose-800 text-sm">
+            <div v-if="flash.error" class="mx-4 sm:mx-6 lg:mx-8 mt-4 px-4 py-2 rounded-lg bg-rose-50 border border-rose-200 text-rose-800 text-sm">
                 {{ flash.error }}
             </div>
 
-            <main class="flex-1 overflow-y-auto p-8">
+            <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
                 <slot />
             </main>
         </div>
