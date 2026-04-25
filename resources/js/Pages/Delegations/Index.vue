@@ -29,9 +29,9 @@ function remove(d) {
         <template #breadcrumbs>FocusMatrix · {{ t('nav.delegate') }}</template>
         <template #title>{{ t('nav.delegate') }}</template>
 
-        <div class="flex items-center justify-between mb-6">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
             <p class="text-sm text-graphite-600 max-w-xl">{{ t('delegate.remember') }}</p>
-            <Link :href="route('delegations.create')" class="fm-btn-primary">
+            <Link :href="route('delegations.create')" class="fm-btn-primary shrink-0">
                 <PlusIcon class="w-4 h-4" /> {{ t('delegate.title') }}
             </Link>
         </div>
@@ -41,7 +41,9 @@ function remove(d) {
                 <UserGroupIcon class="w-10 h-10 mx-auto text-graphite-300" />
                 <p class="mt-3 text-sm">{{ t('common.empty') }}</p>
             </div>
-            <table v-else class="w-full text-sm">
+
+            <!-- Desktop table -->
+            <table v-else class="hidden md:table w-full text-sm">
                 <thead class="text-left text-graphite-500">
                     <tr>
                         <th class="pb-3 font-medium">{{ t('task.title') }}</th>
@@ -76,6 +78,29 @@ function remove(d) {
                     </tr>
                 </tbody>
             </table>
+
+            <!-- Mobile card list -->
+            <ul v-if="delegations.length > 0" class="md:hidden divide-y divide-graphite-100">
+                <li v-for="d in delegations" :key="d.id" class="py-4">
+                    <div class="flex items-start justify-between gap-2">
+                        <Link :href="route('delegations.show', d.id)" class="font-medium text-navy-900 hover:underline flex-1 min-w-0">
+                            {{ d.task?.title }}
+                        </Link>
+                        <span :class="['fm-badge shrink-0', statusTones[d.status]]">{{ d.status }}</span>
+                    </div>
+                    <div v-if="d.goal" class="text-xs text-graphite-500 mt-1 line-clamp-1">{{ d.goal }}</div>
+                    <div class="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-xs text-graphite-600">
+                        <span>{{ d.delegate_user?.name || d.delegate_name_fallback || '—' }}</span>
+                        <span class="inline-flex items-center gap-1"><ClockIcon class="w-3.5 h-3.5" />{{ d.deadline?.slice(0, 10) || '—' }}</span>
+                        <span class="capitalize">{{ d.decision_scope }}</span>
+                    </div>
+                    <div class="mt-2 flex justify-end">
+                        <button @click="remove(d)" class="p-1.5 text-graphite-400 hover:text-rose-600">
+                            <TrashIcon class="w-4 h-4" />
+                        </button>
+                    </div>
+                </li>
+            </ul>
         </div>
     </FocusLayout>
 </template>

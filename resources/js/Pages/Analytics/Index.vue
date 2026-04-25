@@ -49,7 +49,7 @@ const scoreColor = (s) => {
         </div>
 
         <!-- Headline metrics -->
-        <div class="grid md:grid-cols-4 gap-4 mb-6">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6">
             <div class="fm-card">
                 <div class="text-xs text-graphite-500 uppercase tracking-wide mb-1">{{ t('analytics.team_focus_score') }}</div>
                 <div class="text-4xl font-display font-bold" :class="scoreColor(team_focus_score)">{{ team_focus_score }}%</div>

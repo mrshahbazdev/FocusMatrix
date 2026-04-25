@@ -35,6 +35,7 @@ class CreateNewUser implements CreatesNewUsers
                 'password' => Hash::make($input['password']),
             ]), function (User $user) {
                 $this->createTeam($user);
+                $this->acceptPendingInvitations($user);
             });
         });
     }
@@ -49,5 +50,29 @@ class CreateNewUser implements CreatesNewUsers
             'name' => explode(' ', $user->name, 2)[0]."'s Team",
             'personal_team' => true,
         ]));
+    }
+
+    /**
+     * Accept any pending team invitations for the user's email and switch
+     * the current team to the first invited team.
+     */
+    protected function acceptPendingInvitations(User $user): void
+    {
+        $invitationModel = Jetstream::teamInvitationModel();
+        $invitations = $invitationModel::where('email', $user->email)->get();
+
+        foreach ($invitations as $invitation) {
+            $invitation->team->users()->attach($user, [
+                'role' => $invitation->role,
+            ]);
+
+            $invitation->delete();
+        }
+
+        if ($invitations->isNotEmpty()) {
+            $user->forceFill([
+                'current_team_id' => $invitations->first()->team_id,
+            ])->save();
+        }
     }
 }

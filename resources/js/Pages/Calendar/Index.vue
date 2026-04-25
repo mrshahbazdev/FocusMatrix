@@ -205,34 +205,36 @@ function formatTime(iso) {
         </div>
 
         <!-- Month grid -->
-        <div class="fm-card !p-0 overflow-hidden">
-            <div class="grid grid-cols-7 bg-navy-900 text-navy-100 text-xs uppercase tracking-wide">
-                <div v-for="(w, i) in weekdays" :key="i" class="px-2 py-2 text-center font-medium">{{ w }}</div>
-            </div>
-            <div class="grid grid-cols-7">
-                <div v-for="(day, i) in days" :key="i"
-                    @click="openCreate(day)"
-                    :class="[
-                        'min-h-[110px] border-t border-r border-graphite-200 p-1.5 cursor-pointer hover:bg-accent/5 transition flex flex-col gap-1',
-                        !isCurrentMonth(day) ? 'bg-graphite-50/50 text-graphite-400' : 'bg-white',
-                        (i + 1) % 7 === 0 ? 'border-r-0' : '',
-                    ]">
-                    <div class="flex items-center justify-between">
-                        <span :class="[
-                            'text-xs font-medium',
-                            isToday(day) ? 'bg-accent text-white px-1.5 py-0.5 rounded-full' : 'text-navy-800',
-                            !isCurrentMonth(day) ? 'text-graphite-400' : '',
-                        ]">{{ day.getDate() }}</span>
-                    </div>
-                    <div class="flex flex-col gap-0.5">
-                        <button v-for="ev in eventsFor(day).slice(0, 3)" :key="ev.id"
-                            @click.stop="openEdit(ev)"
-                            :class="['text-left text-xs px-1.5 py-0.5 rounded border truncate', colorClasses[ev.color] || colorClasses.accent]">
-                            <span v-if="!ev.all_day" class="font-mono text-[10px] mr-1">{{ formatTime(ev.starts_at) }}</span>
-                            {{ ev.title }}
-                        </button>
-                        <div v-if="eventsFor(day).length > 3" class="text-[10px] text-graphite-500 px-1">
-                            +{{ eventsFor(day).length - 3 }} {{ t('calendar.more') }}
+        <div class="fm-card !p-0 overflow-x-auto">
+            <div class="min-w-[500px]">
+                <div class="grid grid-cols-7 bg-navy-900 text-navy-100 text-xs uppercase tracking-wide">
+                    <div v-for="(w, i) in weekdays" :key="i" class="px-1 sm:px-2 py-2 text-center font-medium">{{ w }}</div>
+                </div>
+                <div class="grid grid-cols-7">
+                    <div v-for="(day, i) in days" :key="i"
+                        @click="openCreate(day)"
+                        :class="[
+                            'min-h-[70px] sm:min-h-[110px] border-t border-r border-graphite-200 p-1 sm:p-1.5 cursor-pointer hover:bg-accent/5 transition flex flex-col gap-0.5 sm:gap-1',
+                            !isCurrentMonth(day) ? 'bg-graphite-50/50 text-graphite-400' : 'bg-white',
+                            (i + 1) % 7 === 0 ? 'border-r-0' : '',
+                        ]">
+                        <div class="flex items-center justify-between">
+                            <span :class="[
+                                'text-[10px] sm:text-xs font-medium',
+                                isToday(day) ? 'bg-accent text-white px-1 sm:px-1.5 py-0.5 rounded-full' : 'text-navy-800',
+                                !isCurrentMonth(day) ? 'text-graphite-400' : '',
+                            ]">{{ day.getDate() }}</span>
+                        </div>
+                        <div class="flex flex-col gap-0.5">
+                            <button v-for="ev in eventsFor(day).slice(0, 3)" :key="ev.id"
+                                @click.stop="openEdit(ev)"
+                                :class="['text-left text-[10px] sm:text-xs px-1 sm:px-1.5 py-0.5 rounded border truncate', colorClasses[ev.color] || colorClasses.accent]">
+                                <span v-if="!ev.all_day" class="font-mono text-[10px] mr-1 hidden sm:inline">{{ formatTime(ev.starts_at) }}</span>
+                                {{ ev.title }}
+                            </button>
+                            <div v-if="eventsFor(day).length > 3" class="text-[10px] text-graphite-500 px-1">
+                                +{{ eventsFor(day).length - 3 }} {{ t('calendar.more') }}
+                            </div>
                         </div>
                     </div>
                 </div>

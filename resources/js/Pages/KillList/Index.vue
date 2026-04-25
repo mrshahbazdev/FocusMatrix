@@ -45,9 +45,9 @@ function toggle(field, value) {
         <template #breadcrumbs>FocusMatrix · {{ t('drop.kill_list') }}</template>
         <template #title>{{ t('drop.kill_list') }}</template>
 
-        <div class="flex items-center justify-between mb-6">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
             <p class="text-sm text-graphite-600 max-w-xl">{{ t('drop.kill_list_sub') }}</p>
-            <button @click="showForm = !showForm" class="fm-btn-primary">
+            <button @click="showForm = !showForm" class="fm-btn-primary shrink-0">
                 <XCircleIcon class="w-4 h-4" /> {{ t('drop.confirm') }}
             </button>
         </div>

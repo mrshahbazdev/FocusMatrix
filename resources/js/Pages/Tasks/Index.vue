@@ -86,18 +86,18 @@ function closeFocusModal() { focusTask.value = null; }
                 <p class="mt-3 text-sm">{{ t('common.empty') }}</p>
             </div>
             <ul v-else class="divide-y divide-graphite-200">
-                <li v-for="task in tasks" :key="task.id" class="py-4 flex items-center gap-4">
+                <li v-for="task in tasks" :key="task.id" class="py-4 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
                     <div class="flex-1 min-w-0">
                         <div class="font-medium text-navy-900">{{ task.title }}</div>
                         <div v-if="task.description" class="text-sm text-graphite-600 mt-1">{{ task.description }}</div>
-                        <div class="flex items-center gap-2 mt-2 text-xs text-graphite-500">
+                        <div class="flex flex-wrap items-center gap-2 mt-2 text-xs text-graphite-500">
                             <span>{{ t('task.created') }} {{ new Date(task.created_at).toLocaleDateString() }}</span>
                             <span v-if="task.only_you_category" class="fm-badge bg-accent/10 text-accent">
                                 {{ task.only_you_category.replace('_', ' ') }}
                             </span>
                         </div>
                     </div>
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-2 flex-wrap">
                         <Link v-if="task.status === 'inbox'" :href="route('tasks.triage', task.id)" class="fm-btn-primary !py-1.5 text-xs">
                             Triage →
                         </Link>
