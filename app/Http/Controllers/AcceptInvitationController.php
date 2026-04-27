@@ -18,7 +18,7 @@ class AcceptInvitationController extends Controller
                 ->banner(__('This invitation has already been accepted or cancelled.'));
         }
 
-        if ($request->user()->email !== $invitation->email) {
+        if (strtolower($request->user()->email) !== strtolower($invitation->email)) {
             abort(403, __('This invitation was sent to a different email address.'));
         }
 
