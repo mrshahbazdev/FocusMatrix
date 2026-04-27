@@ -59,7 +59,7 @@ class CreateNewUser implements CreatesNewUsers
     protected function acceptPendingInvitations(User $user): void
     {
         $invitationModel = Jetstream::teamInvitationModel();
-        $invitations = $invitationModel::where('email', $user->email)->get();
+        $invitations = $invitationModel::whereRaw('LOWER(email) = ?', [strtolower($user->email)])->get();
 
         foreach ($invitations as $invitation) {
             $invitation->team->users()->attach($user, [

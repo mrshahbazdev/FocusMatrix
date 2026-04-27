@@ -25,6 +25,8 @@ class InviteTeamMember implements InvitesTeamMembers
     {
         Gate::forUser($user)->authorize('addTeamMember', $team);
 
+        $email = strtolower($email);
+
         $this->validate($team, $email, $role);
 
         InvitingTeamMember::dispatch($team, $email, $role);
