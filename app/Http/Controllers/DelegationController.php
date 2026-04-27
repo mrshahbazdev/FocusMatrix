@@ -265,15 +265,26 @@ class DelegationController extends Controller
 
     public function update(Request $request, Delegation $delegation): RedirectResponse
     {
-        abort_unless($delegation->delegator_id === $request->user()->id, 403);
-        $data = $request->validate([
-            'status' => ['sometimes', 'in:open,invited,accepted,declined,in_progress,done,overdue,cancelled'],
-            'goal' => ['sometimes', 'string'],
-            'deadline' => ['nullable', 'date'],
-            'decision_scope' => ['sometimes', 'in:inform,consult,decide'],
-            'resources' => ['nullable', 'string'],
-            'health_score' => ['sometimes', 'integer', 'between:0,100'],
-        ]);
+        $userId = $request->user()->id;
+        $isDelegator = $delegation->delegator_id === $userId;
+        $isDelegate = $delegation->delegate_user_id === $userId;
+        abort_unless($isDelegator || $isDelegate, 403);
+
+        if ($isDelegator) {
+            $data = $request->validate([
+                'status' => ['sometimes', 'in:open,invited,accepted,declined,in_progress,done,overdue,cancelled'],
+                'goal' => ['sometimes', 'string'],
+                'deadline' => ['nullable', 'date'],
+                'decision_scope' => ['sometimes', 'in:inform,consult,decide'],
+                'resources' => ['nullable', 'string'],
+                'health_score' => ['sometimes', 'integer', 'between:0,100'],
+            ]);
+        } else {
+            $data = $request->validate([
+                'status' => ['sometimes', 'in:in_progress,done'],
+            ]);
+        }
+
         $delegation->update($data);
         return back()->with('success', __('Delegation updated.'));
     }
