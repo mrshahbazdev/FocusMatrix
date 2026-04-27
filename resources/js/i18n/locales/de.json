@@ -400,6 +400,8 @@
         "no_micro_desc": "Ich melde mich nicht vor dem vereinbarten Rhythmus.",
         "create": "Delegieren",
         "cancel": "Abbrechen",
+        "select_task": "Aufgabe zum Delegieren",
+        "select_task_placeholder": "Aufgabe auswählen…",
         "remember": "Delegieren heißt Verantwortung abgeben — nicht Arbeit abwerfen."
     },
     "drop": {
