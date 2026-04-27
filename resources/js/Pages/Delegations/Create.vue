@@ -1,4 +1,5 @@
 <script setup>
+import { computed } from 'vue';
 import { Link, useForm } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 import FocusLayout from '@/Layouts/FocusLayout.vue';
@@ -6,13 +7,14 @@ import { ArrowUturnLeftIcon, CheckIcon } from '@heroicons/vue/24/outline';
 
 const props = defineProps({
     task: Object,
+    tasks: Array,
     candidates: Array,
 });
 
 const { t } = useI18n();
 
 const form = useForm({
-    task_id: props.task?.id,
+    task_id: props.task?.id ?? null,
     delegate_user_id: null,
     delegate_name_fallback: '',
     goal: '',
@@ -21,6 +23,12 @@ const form = useForm({
     resources: '',
     inform_list: [],
     no_micromanagement: true,
+});
+
+const selectedTask = computed(() => {
+    if (props.task) return props.task;
+    if (form.task_id && props.tasks) return props.tasks.find(t => t.id === form.task_id) ?? null;
+    return null;
 });
 
 function submit() {
@@ -43,11 +51,21 @@ const scopes = [
 
         <form @submit.prevent="submit" class="max-w-3xl">
             <div class="fm-card space-y-6">
+                <!-- Task selector (when no task pre-selected) -->
+                <div v-if="!task">
+                    <label class="fm-label">{{ t('delegate.select_task') }}</label>
+                    <select v-model="form.task_id" class="fm-input">
+                        <option :value="null" disabled>{{ t('delegate.select_task_placeholder') }}</option>
+                        <option v-for="t in tasks" :key="t.id" :value="t.id">{{ t.title }}</option>
+                    </select>
+                    <div v-if="form.errors.task_id" class="text-xs text-rose-600 mt-1">{{ form.errors.task_id }}</div>
+                </div>
+
                 <!-- Task context -->
-                <div v-if="task" class="p-4 rounded-lg bg-navy-50 border border-navy-100">
+                <div v-if="selectedTask" class="p-4 rounded-lg bg-navy-50 border border-navy-100">
                     <div class="text-xs uppercase tracking-wider text-navy-600">{{ t('task.title') }}</div>
-                    <div class="mt-1 font-semibold text-navy-900">{{ task.title }}</div>
-                    <div v-if="task.description" class="text-sm text-navy-700 mt-1">{{ task.description }}</div>
+                    <div class="mt-1 font-semibold text-navy-900">{{ selectedTask.title }}</div>
+                    <div v-if="selectedTask.description" class="text-sm text-navy-700 mt-1">{{ selectedTask.description }}</div>
                 </div>
 
                 <!-- Goal -->

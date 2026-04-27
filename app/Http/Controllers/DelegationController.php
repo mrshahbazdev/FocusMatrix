@@ -94,8 +94,15 @@ class DelegationController extends Controller
                 ->values();
         }
 
+        $tasks = Task::where('user_id', $request->user()->id)
+            ->whereDoesntHave('delegation')
+            ->whereIn('status', [Task::STATUS_INBOX, Task::STATUS_KEEP])
+            ->orderBy('created_at', 'desc')
+            ->get(['id', 'title', 'description']);
+
         return Inertia::render('Delegations/Create', [
             'task' => $task,
+            'tasks' => $tasks,
             'candidates' => $candidates,
         ]);
     }

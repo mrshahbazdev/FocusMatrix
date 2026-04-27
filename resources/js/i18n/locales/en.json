@@ -400,6 +400,8 @@
         "no_micro_desc": "I will not check in before the agreed cadence.",
         "create": "Delegate",
         "cancel": "Cancel",
+        "select_task": "Task to delegate",
+        "select_task_placeholder": "Select a task…",
         "remember": "Delegation means giving up responsibility — not throwing off work."
     },
     "drop": {
