@@ -86,6 +86,12 @@ class Plans
     public static function resolveForUser($user): string
     {
         if (! $user) return self::FREE;
+
+        // When Stripe is not configured, grant full access (owner / dev mode)
+        if (! filled(config('cashier.secret'))) {
+            return self::ENTERPRISE;
+        }
+
         if ($user->subscribed('default')) {
             $name = $user->subscription('default')->name ?? self::PRO;
             return in_array($name, [self::PRO, self::TEAM, self::ENTERPRISE], true) ? $name : self::PRO;
